@@ -76,3 +76,24 @@ df3.plot.line()
 
 plt.show()
 
+
+## Noah
+#See how many consequative days each ID has to select 
+Df1 = df
+Df1['date'] = pd.to_datetime(Df1['time']).dt.date
+Df1 = Df1.groupby(['id', 'date']).count().reset_index()
+s= Df1.groupby('id').date.diff().dt.days.ne(1).cumsum()
+Df1 = Df1.groupby(['id', s]).size().reset_index(level=1, drop=True)
+
+total = Df1.groupby(['id']).sum()
+consec = Df1.groupby(['id']).max()
+
+# the resulting table: 
+#Column 1: ID
+#Column 2: number of days available
+#Column 3: max of consecutive days
+Df1 = pd.concat([total, consec], axis = 1) 
+Df1.columns = ['total days available', 'max # consecutive days']
+Df1               
+
+Df1.mean()
